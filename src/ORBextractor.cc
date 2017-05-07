@@ -109,9 +109,12 @@ static void computeOrbDescriptor(const KeyPoint& kpt,
                                  const Mat& img, const Point* pattern,
                                  uchar* desc)
 {
+
+    //f2d->compute( image, keypoints_1, descriptors_1 );
+    //xfeatures2d::SIFT(image,keypoints[i],descriptors.ptr((int)i),true);
+
     float angle = (float)kpt.angle*factorPI;
     float a = (float)cos(angle), b = (float)sin(angle);
-
     const uchar* center = &img.at<uchar>(cvRound(kpt.pt.y), cvRound(kpt.pt.x));
     const int step = (int)img.step;
 
@@ -1038,10 +1041,11 @@ void ORBextractor::ComputeKeyPointsOld(std::vector<std::vector<KeyPoint> > &allK
 static void computeDescriptors(const Mat& image, vector<KeyPoint>& keypoints, Mat& descriptors,
                                const vector<Point>& pattern)
 {
-    descriptors = Mat::zeros((int)keypoints.size(), 32, CV_8UC1);
 
-    for (size_t i = 0; i < keypoints.size(); i++)
+    descriptors = Mat::zeros((int)keypoints.size(), 32, CV_8UC1);
+    for (size_t i = 0; i < keypoints.size(); i++){
         computeOrbDescriptor(keypoints[i], image, &pattern[0], descriptors.ptr((int)i));
+    }
 }
 
 void ORBextractor::operator()( InputArray _image, InputArray _mask, vector<KeyPoint>& _keypoints,
@@ -1091,7 +1095,10 @@ void ORBextractor::operator()( InputArray _image, InputArray _mask, vector<KeyPo
 
         // Compute the descriptors
         Mat desc = descriptors.rowRange(offset, offset + nkeypointsLevel);
-        computeDescriptors(workingMat, keypoints, desc, pattern);
+        std::vector<KeyPoint> keypoints_1;
+        cv::Ptr<Feature2D> f2d = xfeatures2d::SIFT::create(3000,3,0.04,10,2);
+        f2d->compute(workingMat, keypoints, desc);
+        //computeDescriptors(workingMat, keypoints, desc, pattern);
 
         offset += nkeypointsLevel;
 

@@ -317,7 +317,7 @@ void Tracking::Track()
             }
             else
             {
-                bOK = Relocalization();
+                //bOK = Relocalization();
             }
         }
         else
@@ -326,7 +326,7 @@ void Tracking::Track()
 
             if(mState==LOST)
             {
-                bOK = Relocalization();
+                //bOK = Relocalization();
             }
             else
             {
@@ -363,9 +363,9 @@ void Tracking::Track()
                         vbOutMM = mCurrentFrame.mvbOutlier;
                         TcwMM = mCurrentFrame.mTcw.clone();
                     }
-                    bOKReloc = Relocalization();
+                    //bOKReloc = Relocalization();
 
-                    if(bOKMM && !bOKReloc)
+                    if(bOKMM)// && !bOKReloc)
                     {
                         mCurrentFrame.SetPose(TcwMM);
                         mCurrentFrame.mvpMapPoints = vpMPsMM;
@@ -382,12 +382,13 @@ void Tracking::Track()
                             }
                         }
                     }
-                    else if(bOKReloc)
+                    /*else if(bOKReloc)
                     {
                         mbVO = false;
-                    }
+                    }*/
 
-                    bOK = bOKReloc || bOKMM;
+                    //bOK = bOKReloc || bOKMM;
+                    bOK = bOKMM;
                 }
             }
         }
@@ -916,7 +917,7 @@ bool Tracking::TrackWithMotionModel()
             else if(mCurrentFrame.mvpMapPoints[i]->Observations()>0)
                 nmatchesMap++;
         }
-    }    
+    }
 
     if(mbOnlyTracking)
     {
